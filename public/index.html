@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Waste Classification</title>
+
+  <!-- Libraries (stable versions) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Waste Classification</h1>
+
+  <div class="controls">
+    <button id="startCam">Start Camera</button>
+    <input type="file" id="imageUpload" accept="image/*">
+  </div>
+
+  <div id="camera-container"></div>
+
+  <div id="results">Waiting…</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
