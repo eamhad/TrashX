@@ -1,14 +1,18 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 
-// Basic route (test)
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Default route
 app.get("/", (req, res) => {
-  res.send("Server is running on Render 🚀");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// IMPORTANT: use Render's PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+
