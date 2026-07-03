@@ -69,15 +69,26 @@ async function handleImage(event) {
   };
 }
 
+let lastDisplayTime = 0;
+
 async function predict(source) {
   const predictions = await model.predict(source);
 
+  // Update only once every 5 seconds
+  if (Date.now() - lastDisplayTime < 5000) return;
+
+  lastDisplayTime = Date.now();
+
   let output = "";
+
   predictions.forEach(p => {
     if (p.probability > 0.6) {
       output += `<strong>${p.className}</strong>: ${(p.probability * 100).toFixed(1)}%<br>`;
     }
   });
+
+  resultsDiv.innerHTML = output || "No confident prediction";
+}
 
   resultsDiv.innerHTML = output || "No confident prediction";
 }
