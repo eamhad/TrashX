@@ -89,6 +89,21 @@ async function predict(source) {
 
   resultsDiv.innerHTML = output || "No confident prediction";
 }
+let lastDisplayTime = 0;
 
+async function predict(source) {
+  const predictions = await model.predict(source);
+
+  if (Date.now() - lastDisplayTime < 5000) return;
+
+  lastDisplayTime = Date.now();
+
+  const best = predictions.reduce((a, b) =>
+    a.probability > b.probability ? a : b
+  );
+
+  resultsDiv.innerHTML =
+    `<strong>${best.className}</strong><br>${(best.probability * 100).toFixed(1)}%`;
+}
   resultsDiv.innerHTML = output || "No confident prediction";
 }
