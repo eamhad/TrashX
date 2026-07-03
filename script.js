@@ -5,7 +5,7 @@ let webcam;
 let running = false;
 let lastPredictionTime = 0;
 
-const UPDATE_INTERVAL = 5000; // Update prediction every 5 seconds
+const UPDATE_INTERVAL = 2000; // Update prediction every 5 seconds
 
 const startBtn = document.getElementById("startCam");
 const uploadInput = document.getElementById("imageUpload");
