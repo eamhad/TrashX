@@ -1,109 +1,198 @@
-const MODEL_URL = "model/";
+const MODEL_URL = "./model/";
 
-// 🔧 EASY FPS CONTROL (CHANGE THIS)
-const FPS = 5;
-const FRAME_INTERVAL = 1000 / FPS;
-
-let model, webcam, lastFrameTime = 0;
+let model;
+let webcam;
 let running = false;
+let lastPredictionTime = 0;
 
-const camBtn = document.getElementById("startCam");
-const imgInput = document.getElementById("imageUpload");
-const camContainer = document.getElementById("camera-container");
-const resultsDiv = document.getElementById("results");
+const UPDATE_INTERVAL = 5000; // Update prediction every 5 seconds
 
-camBtn.onclick = startCamera;
-imgInput.onchange = handleImage;
+const startBtn = document.getElementById("startCam");
+const uploadInput = document.getElementById("imageUpload");
+const cameraContainer = document.getElementById("camera-container");
+const results = document.getElementById("results");
 
+startBtn.addEventListener("click", toggleCamera);
+uploadInput.addEventListener("change", handleImage);
+
+// Load AI Model
 async function loadModel() {
-  if (!model) {
+    if (model) return;
+
+    results.innerHTML = `
+        <div class="loading">
+            <h2>Loading AI Model...</h2>
+            <p>Please wait...</p>
+        </div>
+    `;
+
     model = await tmImage.load(
-      MODEL_URL + "model.json",
-      MODEL_URL + "metadata.json"
+        MODEL_URL + "model.json",
+        MODEL_URL + "metadata.json"
     );
-  }
 }
 
-async function startCamera() {
-  await loadModel();
+// Start / Stop Camera
+async function toggleCamera() {
 
-  camContainer.innerHTML = "";
-  resultsDiv.innerText = "Starting camera...";
+    if (running) {
 
-  webcam = new tmImage.Webcam(320, 320, true);
-  await webcam.setup();
-  await webcam.play();
+        running = false;
 
-  camContainer.appendChild(webcam.canvas);
-  running = true;
+        if (webcam) {
+            webcam.stop();
+        }
 
-  requestAnimationFrame(loop);
+        cameraContainer.innerHTML = `
+            <div class="camera-placeholder">
+                <i class="fa-solid fa-camera-retro"></i>
+                <p>Camera Stopped</p>
+            </div>
+        `;
+
+        results.innerHTML = "Camera stopped.";
+
+        startBtn.innerHTML =
+            `<i class="fa-solid fa-video"></i> Start Camera`;
+
+        return;
+    }
+
+    try {
+
+        await loadModel();
+
+        webcam = new tmImage.Webcam(400, 400, true);
+
+        await webcam.setup();
+
+        await webcam.play();
+
+        cameraContainer.innerHTML = "";
+
+        cameraContainer.appendChild(webcam.canvas);
+
+        running = true;
+
+        startBtn.innerHTML =
+            `<i class="fa-solid fa-stop"></i> Stop Camera`;
+
+        requestAnimationFrame(loop);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        results.innerHTML = `
+        <span style="color:#ff6b6b;">
+        Unable to access camera.<br>
+        Please allow camera permission.
+        </span>
+        `;
+
+    }
+
 }
 
-async function loop(timestamp) {
-  if (!running) return;
+// Camera Loop
+async function loop() {
 
-  if (timestamp - lastFrameTime >= FRAME_INTERVAL) {
-    lastFrameTime = timestamp;
+    if (!running) return;
 
     webcam.update();
-    await predict(webcam.canvas);
-  }
 
-  requestAnimationFrame(loop);
-}
+    const now = Date.now();
 
-async function handleImage(event) {
-  await loadModel();
-  running = false;
+    if (now - lastPredictionTime >= UPDATE_INTERVAL) {
 
-  const file = event.target.files[0];
-  if (!file) return;
+        lastPredictionTime = now;
 
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  img.onload = async () => {
-    camContainer.innerHTML = "";
-    camContainer.appendChild(img);
-    await predict(img);
-  };
-}
+        await predict(webcam.canvas);
 
-let lastDisplayTime = 0;
-
-async function predict(source) {
-  const predictions = await model.predict(source);
-
-  // Update only once every 5 seconds
-  if (Date.now() - lastDisplayTime < 5000) return;
-
-  lastDisplayTime = Date.now();
-
-  let output = "";
-
-  predictions.forEach(p => {
-    if (p.probability > 0.6) {
-      output += `<strong>${p.className}</strong>: ${(p.probability * 100).toFixed(1)}%<br>`;
     }
-  });
 
-  resultsDiv.innerHTML = output || "No confident prediction";
+    requestAnimationFrame(loop);
+
 }
-let lastDisplayTime = 0;
 
+// Upload Image
+async function handleImage(event) {
+
+    await loadModel();
+
+    running = false;
+
+    if (webcam) webcam.stop();
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const img = new Image();
+
+    img.src = URL.createObjectURL(file);
+
+    img.onload = async () => {
+
+        cameraContainer.innerHTML = "";
+
+        cameraContainer.appendChild(img);
+
+        await predict(img);
+
+    };
+
+}
+
+// Predict
 async function predict(source) {
-  const predictions = await model.predict(source);
 
-  if (Date.now() - lastDisplayTime < 5000) return;
+    const prediction = await model.predict(source);
 
-  lastDisplayTime = Date.now();
+    let best = prediction[0];
 
-  const best = predictions.reduce((a, b) =>
-    a.probability > b.probability ? a : b
-  );
+    for (let i = 1; i < prediction.length; i++) {
 
-  resultsDiv.innerHTML =
-    `<strong>${best.className}</strong><br>${(best.probability * 100).toFixed(1)}%`;
-}
-  resultsDiv.innerHTML = output || "No confident prediction";
+        if (prediction[i].probability > best.probability) {
+
+            best = prediction[i];
+
+        }
+
+    }
+
+    const confidence = (best.probability * 100).toFixed(1);
+
+    let color = "#22c55e";
+
+    if (confidence < 80) color = "#f59e0b";
+
+    if (confidence < 60) color = "#ef4444";
+
+    results.innerHTML = `
+
+        <div class="prediction-card">
+
+            <h2>${best.className}</h2>
+
+            <p>Confidence</p>
+
+            <div class="progress">
+
+                <div class="progress-fill"
+                style="width:${confidence}%;
+                background:${color};">
+
+                </div>
+
+            </div>
+
+            <h3>${confidence}%</h3>
+
+        </div>
+
+    `;
+
 }
