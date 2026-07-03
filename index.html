@@ -1,28 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Waste Classification</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Libraries (stable versions) -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <title>TrashX AI | Waste Classification</title>
 
-  <link rel="stylesheet" href="style.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- TensorFlow -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
+
+    <!-- Teachable Machine -->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <h1>Waste Classification</h1>
+    <div class="background-blur"></div>
 
-  <div class="controls">
-    <button id="startCam">Start Camera</button>
-    <input type="file" id="imageUpload" accept="image/*">
-  </div>
+    <main class="container">
 
-  <div id="camera-container"></div>
+        <!-- Header -->
 
-  <div id="results">Waiting…</div>
+        <header>
 
-  <script src="script.js"></script>
+            <h1>
+                <i class="fa-solid fa-recycle"></i>
+                TrashX AI
+            </h1>
+
+            <p>
+                Smart Waste Classification using Artificial Intelligence
+            </p>
+
+        </header>
+
+        <!-- Main Grid -->
+
+        <section class="main-grid">
+
+            <!-- Camera Card -->
+
+            <div class="card camera-card">
+
+                <div class="card-title">
+                    <i class="fa-solid fa-camera"></i>
+                    Camera
+                </div>
+
+                <div id="camera-container">
+
+                    <div class="camera-placeholder">
+
+                        <i class="fa-solid fa-camera-retro"></i>
+
+                        <p>Camera Preview</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Result Card -->
+
+            <div class="card result-card">
+
+                <div class="card-title">
+
+                    <i class="fa-solid fa-brain"></i>
+
+                    AI Prediction
+
+                </div>
+
+                <div id="results">
+
+                    Waiting for camera...
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Buttons -->
+
+        <section class="controls">
+
+            <button id="startCam">
+
+                <i class="fa-solid fa-video"></i>
+
+                Start Camera
+
+            </button>
+
+            <label for="imageUpload" class="upload-btn">
+
+                <i class="fa-solid fa-image"></i>
+
+                Upload Image
+
+            </label>
+
+            <input type="file"
+                id="imageUpload"
+                accept="image/*">
+
+        </section>
+
+        <!-- Info Cards -->
+
+        <section class="info-grid">
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-bottle-water"></i>
+
+                <h3>Plastic</h3>
+
+                <p>Recycle plastic bottles, containers and packaging.</p>
+
+            </div>
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-wine-bottle"></i>
+
+                <h3>Glass</h3>
+
+                <p>Separate glass waste to improve recycling efficiency.</p>
+
+            </div>
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-newspaper"></i>
+
+                <h3>Paper</h3>
+
+                <p>Recycle paper and cardboard whenever possible.</p>
+
+            </div>
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-trash"></i>
+
+                <h3>General Waste</h3>
+
+                <p>Dispose non-recyclable waste responsibly.</p>
+
+            </div>
+
+        </section>
+
+        <!-- Footer -->
+
+        <footer>
+
+            <p>
+
+                Powered by TensorFlow.js & Teachable Machine
+
+            </p>
+
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+
 </body>
+
 </html>
