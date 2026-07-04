@@ -146,9 +146,6 @@ async function handleImage(event) {
 
 }
 
-// Prediction History
-let predictionHistory = [];
-
 async function predict(source) {
 
     const prediction = await model.predict(source);
@@ -163,10 +160,8 @@ async function predict(source) {
 
     const confidence = (best.probability * 100).toFixed(1);
 
-    // Minimum confidence required
     const THRESHOLD = 75;
 
-    // Icons
     const icons = {
         Plastic: "🥤",
         Paper: "📄",
@@ -179,91 +174,66 @@ async function predict(source) {
         Clothes: "👕"
     };
 
-    // Confidence Color
     let color = "#22c55e";
 
     if (confidence < 90) color = "#f59e0b";
-
     if (confidence < 70) color = "#ef4444";
 
-    // Low confidence
     if (confidence < THRESHOLD) {
 
         results.innerHTML = `
-
         <div class="prediction-card">
-
             <h2>❓ Unknown Object</h2>
-
             <p>Confidence too low to classify.</p>
-
         </div>
-
         `;
 
         return;
     }
 
-    // Save History
-    predictionHistory.unshift(best.className);
-
-    predictionHistory = [...new Set(predictionHistory)];
-
-    if (predictionHistory.length > 5)
-        predictionHistory.pop();
-
-    // Build History HTML
-    let historyHTML = "";
-
-    predictionHistory.forEach(item => {
-
-        historyHTML += `
-            <span class="history-item">
-                ${icons[item] || "♻️"} ${item}
-            </span>
-        `;
-
-    });
+    // Disposal tips
+    const disposalGuide = {
+        Plastic: "♻️ Place in the Plastic Recycling Bin.",
+        Paper: "♻️ Place in the Paper Recycling Bin.",
+        Glass: "♻️ Place in the Glass Recycling Bin.",
+        Metal: "♻️ Place in the Metal Recycling Bin.",
+        Organic: "🌱 Place in the Compost/Organic Waste Bin.",
+        Cardboard: "📦 Flatten and recycle with paper/cardboard.",
+        Trash: "🗑️ Dispose in the General Waste Bin.",
+        Battery: "🔋 Take to an E-waste or Battery Collection Center.",
+        Clothes: "👕 Donate or recycle through a textile collection program."
+    };
 
     results.innerHTML = `
 
     <div class="prediction-card">
 
-        <h2>
-
-            ${icons[best.className] || "♻️"}
-
-            ${best.className}
-
-        </h2>
+        <h2>${icons[best.className] || "♻️"} ${best.className}</h2>
 
         <p>Confidence</p>
 
         <div class="progress">
-
             <div class="progress-fill"
-
-            style="width:${confidence}%;
-            background:${color};">
-
+            style="width:${confidence}%; background:${color};">
             </div>
-
         </div>
 
         <h3>${confidence}%</h3>
 
-        <hr style="margin:18px 0;border:.5px solid rgba(255,255,255,.15);">
-
-        <h4>Recent Predictions</h4>
-
-        <div class="history">
-
-            ${historyHTML}
-
+        <div style="
+            margin-top:18px;
+            padding:15px;
+            border-radius:12px;
+            background:rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.12);
+            font-size:15px;
+            line-height:1.5;
+        ">
+            <strong>Disposal Guide</strong><br><br>
+            ${disposalGuide[best.className] || "Dispose responsibly."}
         </div>
 
     </div>
 
     `;
-
 }
