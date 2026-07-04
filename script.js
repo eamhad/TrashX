@@ -151,6 +151,7 @@ async function predict(source) {
     const prediction = await model.predict(source);
 
     let best = prediction[0];
+    const className = best.className.trim().toLowerCase();
 
     for (let i = 1; i < prediction.length; i++) {
         if (prediction[i].probability > best.probability) {
@@ -190,8 +191,7 @@ async function predict(source) {
     }
 
     // Disposal tips
-   const className = best.className.trim().toLowerCase();
-
+  
 const disposalGuide = {
     "plastic": "♻️ Place in the Plastic Recycling Bin.",
     "paper": "📄 Place in the Paper Recycling Bin.",
