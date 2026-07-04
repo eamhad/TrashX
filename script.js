@@ -205,8 +205,9 @@ const disposalGuide = {
     "e-waste": "💻 Take to an Authorized E-waste Collection Centre.",
     "automobile": "🚗 Dispose through an Authorized Vehicle Recycling Facility."
 };
-console.log("Class:", best.className);
+console.log("Best class:", best.className);
 console.log("Normalized:", className);
+console.log("All predictions:", prediction);
     results.innerHTML = `
 
     <div class="prediction-card">
