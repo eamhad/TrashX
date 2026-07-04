@@ -151,10 +151,7 @@ async function predict(source) {
     const prediction = await model.predict(source);
 
     let best = prediction[0];
-const className = best.className
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
+
     for (let i = 1; i < prediction.length; i++) {
         if (prediction[i].probability > best.probability) {
             best = prediction[i];
