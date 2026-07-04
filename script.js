@@ -150,17 +150,18 @@ async function predict(source) {
 
     const prediction = await model.predict(source);
 
-    let best = prediction[0];
-    const className = best.className
+   let best = prediction[0];
+
+for (let i = 1; i < prediction.length; i++) {
+    if (prediction[i].probability > best.probability) {
+        best = prediction[i];
+    }
+}
+
+const className = best.className
     .trim()
     .toLowerCase()
     .replace(/\s+/g, " ");
-
-    for (let i = 1; i < prediction.length; i++) {
-        if (prediction[i].probability > best.probability) {
-            best = prediction[i];
-        }
-    }
 
     const confidence = (best.probability * 100).toFixed(1);
 
@@ -173,7 +174,7 @@ async function predict(source) {
     "metal":"🥫",
     "organic":"🍎",
     "battery":"🔋",
-    "e waste":"💻",
+    "e-waste":"💻",
     "automobile":"🚗"
 };
     let color = "#22c55e";
@@ -212,7 +213,7 @@ console.log("All predictions:", prediction);
 
     <div class="prediction-card">
 
-        <h2>${icons[best.className] || "♻️"} ${best.className}</h2>
+        <h2>${icons[className] || "♻️"} ${best.className}</h2>
 
         <p>Confidence</p>
 
