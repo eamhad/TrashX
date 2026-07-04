@@ -151,7 +151,7 @@ async function predict(source) {
     const prediction = await model.predict(source);
 
     let best = prediction[0];
-
+const className = best.className.trim().toLowerCase();
     for (let i = 1; i < prediction.length; i++) {
         if (prediction[i].probability > best.probability) {
             best = prediction[i];
@@ -162,18 +162,16 @@ async function predict(source) {
 
     const THRESHOLD = 75;
 
-    const icons = {
-        Plastic: "🥤",
-        Paper: "📄",
-        Glass: "🍾",
-        Metal: "🥫",
-        Organic: "🍎",
-        Cardboard: "📦",
-        Trash: "🗑️",
-        Battery: "🔋",
-        Clothes: "👕"
-    };
-
+   const icons = {
+    "plastic":"🥤",
+    "paper":"📄",
+    "glass":"🍾",
+    "metal":"🥫",
+    "organic":"🍎",
+    "battery":"🔋",
+    "e waste":"💻",
+    "automobile":"🚗"
+};
     let color = "#22c55e";
 
     if (confidence < 90) color = "#f59e0b";
@@ -192,17 +190,16 @@ async function predict(source) {
     }
 
     // Disposal tips
-    const disposalGuide = {
-        Plastic: "♻️ Place in the Plastic Recycling Bin.",
-        Paper: "♻️ Place in the Paper Recycling Bin.",
-        Glass: "♻️ Place in the Glass Recycling Bin.",
-        Metal: "♻️ Place in the Metal Recycling Bin.",
-        Organic: "🌱 Place in the Compost/Organic Waste Bin.",
-        Cardboard: "📦 Flatten and recycle with paper/cardboard.",
-        Trash: "🗑️ Dispose in the General Waste Bin.",
-        Battery: "🔋 Take to an E-waste or Battery Collection Center.",
-        Clothes: "👕 Donate or recycle through a textile collection program."
-    };
+   const disposalGuide = {
+    "plastic": "♻️ Place in the Plastic Recycling Bin.",
+    "paper": "♻️ Place in the Paper Recycling Bin.",
+    "glass": "♻️ Place in the Glass Recycling Bin.",
+    "metal": "♻️ Place in the Metal Recycling Bin.",
+    "organic": "🌱 Place in the Compost/Organic Waste Bin.",
+    "battery": "🔋 Take to an E-waste or Battery Collection Center.",
+    "e waste": "💻 Dispose at an Authorized E-waste Collection Center.",
+    "automobile": "🚗 Dispose through an Authorized Automobile Recycling Facility."
+};
 
     results.innerHTML = `
 
