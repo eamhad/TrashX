@@ -151,7 +151,10 @@ async function predict(source) {
     const prediction = await model.predict(source);
 
     let best = prediction[0];
-const className = best.className.trim().toLowerCase();
+const className = best.className
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
     for (let i = 1; i < prediction.length; i++) {
         if (prediction[i].probability > best.probability) {
             best = prediction[i];
@@ -192,15 +195,16 @@ const className = best.className.trim().toLowerCase();
     // Disposal tips
    const disposalGuide = {
     "plastic": "♻️ Place in the Plastic Recycling Bin.",
-    "paper": "♻️ Place in the Paper Recycling Bin.",
-    "glass": "♻️ Place in the Glass Recycling Bin.",
-    "metal": "♻️ Place in the Metal Recycling Bin.",
-    "organic": "🌱 Place in the Compost/Organic Waste Bin.",
-    "battery": "🔋 Take to an E-waste or Battery Collection Center.",
-    "e waste": "💻 Dispose at an Authorized E-waste Collection Center.",
-    "automobile": "🚗 Dispose through an Authorized Automobile Recycling Facility."
+    "paper": "📄 Place in the Paper Recycling Bin.",
+    "organic": "🌱 Place in the Organic/Compost Bin.",
+    "metal": "🥫 Place in the Metal Recycling Bin.",
+    "glass": "🍾 Place in the Glass Recycling Bin.",
+    "battery": "🔋 Take to a Battery Collection Centre.",
+    "automobile": "🚗 Dispose through an Authorized Vehicle Recycling Facility.",
+    "e waste": "💻 Take to an Authorized E-waste Collection Centre."
 };
-
+console.log("Class:", best.className);
+console.log("Normalized:", className);
     results.innerHTML = `
 
     <div class="prediction-card">
@@ -227,7 +231,7 @@ const className = best.className.trim().toLowerCase();
             line-height:1.5;
         ">
             <strong>Disposal Guide</strong><br><br>
-            ${disposalGuide[best.className] || "Dispose responsibly."}
+            ${disposalGuide[className] ?? "Dispose responsibly."}
         </div>
 
     </div>
