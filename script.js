@@ -1,4 +1,4 @@
-const MODEL_URL = "./model/";
+const MODEL_URL = "model/";
 
 let model;
 let webcam;
