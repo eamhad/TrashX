@@ -193,15 +193,17 @@ const className = best.className
     }
 
     // Disposal tips
-   const disposalGuide = {
+   const className = best.className.trim().toLowerCase();
+
+const disposalGuide = {
     "plastic": "♻️ Place in the Plastic Recycling Bin.",
     "paper": "📄 Place in the Paper Recycling Bin.",
-    "organic": "🌱 Place in the Organic/Compost Bin.",
-    "metal": "🥫 Place in the Metal Recycling Bin.",
     "glass": "🍾 Place in the Glass Recycling Bin.",
+    "metal": "🥫 Place in the Metal Recycling Bin.",
+    "organic": "🌱 Place in the Organic Waste Bin.",
     "battery": "🔋 Take to a Battery Collection Centre.",
-    "automobile": "🚗 Dispose through an Authorized Vehicle Recycling Facility.",
-    "e waste": "💻 Take to an Authorized E-waste Collection Centre."
+    "e-waste": "💻 Take to an Authorized E-waste Collection Centre.",
+    "automobile": "🚗 Dispose through an Authorized Vehicle Recycling Facility."
 };
 console.log("Class:", best.className);
 console.log("Normalized:", className);
