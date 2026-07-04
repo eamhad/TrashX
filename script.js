@@ -146,7 +146,9 @@ async function handleImage(event) {
 
 }
 
-// Predict
+// Prediction History
+let predictionHistory = [];
+
 async function predict(source) {
 
     const prediction = await model.predict(source);
@@ -154,44 +156,113 @@ async function predict(source) {
     let best = prediction[0];
 
     for (let i = 1; i < prediction.length; i++) {
-
         if (prediction[i].probability > best.probability) {
-
             best = prediction[i];
-
         }
-
     }
 
     const confidence = (best.probability * 100).toFixed(1);
 
+    // Minimum confidence required
+    const THRESHOLD = 75;
+
+    // Icons
+    const icons = {
+        Plastic: "🥤",
+        Paper: "📄",
+        Glass: "🍾",
+        Metal: "🥫",
+        Organic: "🍎",
+        Cardboard: "📦",
+        Trash: "🗑️",
+        Battery: "🔋",
+        Clothes: "👕"
+    };
+
+    // Confidence Color
     let color = "#22c55e";
 
-    if (confidence < 80) color = "#f59e0b";
+    if (confidence < 90) color = "#f59e0b";
 
-    if (confidence < 60) color = "#ef4444";
+    if (confidence < 70) color = "#ef4444";
 
-    results.innerHTML = `
+    // Low confidence
+    if (confidence < THRESHOLD) {
+
+        results.innerHTML = `
 
         <div class="prediction-card">
 
-            <h2>${best.className}</h2>
+            <h2>❓ Unknown Object</h2>
 
-            <p>Confidence</p>
+            <p>Confidence too low to classify.</p>
 
-            <div class="progress">
+        </div>
 
-                <div class="progress-fill"
-                style="width:${confidence}%;
-                background:${color};">
+        `;
 
-                </div>
+        return;
+    }
+
+    // Save History
+    predictionHistory.unshift(best.className);
+
+    predictionHistory = [...new Set(predictionHistory)];
+
+    if (predictionHistory.length > 5)
+        predictionHistory.pop();
+
+    // Build History HTML
+    let historyHTML = "";
+
+    predictionHistory.forEach(item => {
+
+        historyHTML += `
+            <span class="history-item">
+                ${icons[item] || "♻️"} ${item}
+            </span>
+        `;
+
+    });
+
+    results.innerHTML = `
+
+    <div class="prediction-card">
+
+        <h2>
+
+            ${icons[best.className] || "♻️"}
+
+            ${best.className}
+
+        </h2>
+
+        <p>Confidence</p>
+
+        <div class="progress">
+
+            <div class="progress-fill"
+
+            style="width:${confidence}%;
+            background:${color};">
 
             </div>
 
-            <h3>${confidence}%</h3>
+        </div>
+
+        <h3>${confidence}%</h3>
+
+        <hr style="margin:18px 0;border:.5px solid rgba(255,255,255,.15);">
+
+        <h4>Recent Predictions</h4>
+
+        <div class="history">
+
+            ${historyHTML}
 
         </div>
+
+    </div>
 
     `;
 
